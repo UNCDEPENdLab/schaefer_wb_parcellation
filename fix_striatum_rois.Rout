@@ -1,0 +1,78 @@
+
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library("oro.nifti")
+oro.nifti 0.11.0
+> library("glue")
+> 
+> sz <- Sys.getenv("sz")
+> if (sz == "") sz <- "2.3"
+> 
+> 
+> ##Left
+> x <- readNIfTI(glue("l_striatum_tight_7Networks_{sz}mm.nii.gz"), reorient=FALSE)
+> 
+> x[x==2] <- 1 #2 -> 1
+> highvals <- x[x > 2]
+> highvals <- highvals - 2 # 4 ->2; 5 -> 3; etc.
+> x[x > 2] <- highvals
+> 
+> print(table(x))
+x
+     0      1      2      3      4      5 
+607130    114    164     86    242    264 
+> 
+> writeNIfTI(x, glue("l_striatum_tight_7Networks_{sz}mm"), verbose = TRUE)
+  niftiExtension detected!
+  vox_offset = 2768
+  writing niftiExtension(s) at byte = 352
+  writing data at byte = 2768
+[1] "l_striatum_tight_7Networks_2.3mm.nii.gz"
+Warning message:
+In .local(nim, ...) :
+  Class is of niftiExtension, extensions can be removed using as.nifti
+> 
+> ##Right
+> x <- readNIfTI(glue("r_striatum_tight_7Networks_{sz}mm.nii.gz"), reorient=FALSE)
+> x[x==3] <- 0 #only 9 voxels to work with
+> 
+> #same renumbering as above
+> x[x==2] <- 1 #2 -> 1
+> highvals <- x[x > 2]
+> highvals <- highvals - 2 # 4 ->2; 5 -> 3; etc.
+> x[x > 2] <- highvals
+> 
+> print(table(x))
+x
+     0      1      2      3      4      5 
+607179    110    190     76    301    144 
+> 
+> writeNIfTI(x, glue("r_striatum_tight_7Networks_{sz}mm"), verbose = TRUE)
+  niftiExtension detected!
+  vox_offset = 2768
+  writing niftiExtension(s) at byte = 352
+  writing data at byte = 2768
+[1] "r_striatum_tight_7Networks_2.3mm.nii.gz"
+Warning message:
+In .local(nim, ...) :
+  Class is of niftiExtension, extensions can be removed using as.nifti
+> 
+> proc.time()
+   user  system elapsed 
+  3.370   0.118   3.959 

@@ -1,0 +1,27 @@
+----
+SCHAEFER 400:
+
+
+Followed instructions here:
+https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal
+
+I downloaded all of the CBIG repo, then added various paths to MATLAB (utilities and external_packages, I think).
+Also needed to set CBIG_CODE_DIR environment variable
+
+I then ran the script CBIG_gwMRF_build_data_and_perform_clustering.m
+#https://github.com/ThomasYeoLab/CBIG/blob/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Code/CBIG_gwMRF_build_data_and_perform_clustering.m
+
+Based on warnings in output, I tweaked the projection function (CBIG_Projectfslaverage2MNI) to use the CBIG_Projectfslaverage2MNI_Ants version (passing 'nearest' for interpolation).
+I also tried projecting straight to the fonov 2009 template by swapping in the relevant template file and running mri_vol2vol.
+
+Long story short, a few observations:
+1) With 400 parcels in FSL MNI space, the Ants variant of the transform is dead accurate. By contrast, the original version (used in the paper, it appears), is a bit inflated,
+   esp. at the edge of the cortical surface, and it misses some of the GM/WM boundaries that evident by eye.
+2) With 400 parcels and the Fonov 2009c direct warp, the quality of both projection methods (Ants and non-Ants) is clearly inferior by eye. I don't know what's under the hood of this,
+   but perhaps it is unsurprising that the FSL variant does so well given the close integration of Freesurfer and FSL.
+
+Conclusion: use FSL MNI 2mm as the template target for RS data.
+
+
+----
+CIT atlas
