@@ -8,10 +8,17 @@ set -ex
 [ ! -d "high_res_originals" ] && mkdir "high_res_originals"
 
 nSchaefer=200 # parcels
-sz=2.3 # mm
+sz=2.0 # mm
 export sz #picked up in R script
 cleanup=1 # whether to remove intermediate files
 fsl_to_fonov=1
+
+# N.B. The amount of padding needed in the ResampleImageBySpacing may vary between output resolutions and need manual adjustment!
+# Watch out especially for the amygdala parcels.
+
+if [ -n "$1" ]; then
+    ref_2009c="$1"
+fi
 
 Schaefer_srcdir=/proj/mnhallqlab/lab_resources/parcellation/CBIG/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/MNI
 cp ${Schaefer_srcdir}/Schaefer2018_${nSchaefer}Parcels_7Networks_order_FSLMNI152_1mm_ants.nii.gz .
@@ -75,7 +82,7 @@ fslmaths cen_prob -add cmn_prob -thr 0.4 -bin -fillh cmn_combined -odt char
 
 amy_inputs=(l_bla.nii.gz r_bla.nii.gz l_cmn.nii.gz r_cmn.nii.gz)
 for a in "${amy_inputs[@]}"; do
-    ResampleImageBySpacing 3 ${a} ${a/.nii.gz/}_${sz}mm.nii.gz ${sz} ${sz} ${sz} 0 1 1 #0 no smoothing, 1 for 1 voxel padding, 1 for nearest neighbor
+    ResampleImageBySpacing 3 ${a} ${a/.nii.gz/}_${sz}mm.nii.gz ${sz} ${sz} ${sz} 0 2 1 #0 no smoothing, 1 for 1 voxel padding, 1 for nearest neighbor
     imrm "$a"
 done
 
@@ -184,5 +191,10 @@ if [ $cleanup -eq 1 ]; then
     imrm Schaefer2018_${nSchaefer}Parcels_7Networks_order_FSLMNI152_${sz}mm_ants
 fi
 
-applywarp -i Schaefer_$((nSchaefer + 22))_final_${sz}mm -o Schaefer_$((nSchaefer + 22))_final_2009c_${sz}mm --interp=nn \
+if [ -n "$ref_2009c" ]; then 
+    applywarp -i Schaefer_$((nSchaefer + 22))_final_${sz}mm -o Schaefer_$((nSchaefer + 22))_final_2009c_fromref --interp=nn \
+	      -w $MRI_STDDIR/fsl_mni152/fsl_mni152_to_fonov_mni152_warpcoef -r "$ref_2009c"
+else
+    applywarp -i Schaefer_$((nSchaefer + 22))_final_${sz}mm -o Schaefer_$((nSchaefer + 22))_final_2009c_${sz}mm --interp=nn \
 	  -w $MRI_STDDIR/fsl_mni152/fsl_mni152_to_fonov_mni152_warpcoef -r $MRI_STDDIR/mni_icbm152_nlin_asym_09c/mni_icbm152_t1_tal_nlin_asym_09c_${sz}mm
+fi
