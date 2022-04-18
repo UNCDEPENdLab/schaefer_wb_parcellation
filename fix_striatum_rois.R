@@ -7,6 +7,7 @@ if (sz == "") sz <- "2.3"
 
 ##Left
 x <- readNIfTI(glue("l_striatum_tight_7Networks_{sz}mm.nii.gz"), reorient=FALSE)
+x[x==3] <- 0 # 0 voxels to work with at 2.3mm (here for smaller starting resolutions)
 
 x[x==2] <- 1 #2 -> 1
 highvals <- x[x > 2]
@@ -19,7 +20,7 @@ writeNIfTI(x, glue("l_striatum_tight_7Networks_{sz}mm"), verbose = TRUE)
 
 ##Right
 x <- readNIfTI(glue("r_striatum_tight_7Networks_{sz}mm.nii.gz"), reorient=FALSE)
-x[x==3] <- 0 #only 9 voxels to work with
+x[x==3] <- 0 #only 9 voxels to work with at 2.3mm
 
 #same renumbering as above
 x[x==2] <- 1 #2 -> 1

@@ -27,6 +27,7 @@ oro.nifti 0.11.0
 > 
 > ##Left
 > x <- readNIfTI(glue("l_striatum_tight_7Networks_{sz}mm.nii.gz"), reorient=FALSE)
+> x[x==3] <- 0 # 0 voxels to work with at 2.3mm (here for smaller starting resolutions)
 > 
 > x[x==2] <- 1 #2 -> 1
 > highvals <- x[x > 2]
@@ -35,22 +36,22 @@ oro.nifti 0.11.0
 > 
 > print(table(x))
 x
-     0      1      2      3      4      5 
-607130    114    164     86    242    264 
+      0       1       2       3       4       5 
+7210226    1460    2058    1039    3095    3154 
 > 
 > writeNIfTI(x, glue("l_striatum_tight_7Networks_{sz}mm"), verbose = TRUE)
   niftiExtension detected!
   vox_offset = 2768
   writing niftiExtension(s) at byte = 352
   writing data at byte = 2768
-[1] "l_striatum_tight_7Networks_2.3mm.nii.gz"
+[1] "l_striatum_tight_7Networks_1.0mm.nii.gz"
 Warning message:
 In .local(nim, ...) :
   Class is of niftiExtension, extensions can be removed using as.nifti
 > 
 > ##Right
 > x <- readNIfTI(glue("r_striatum_tight_7Networks_{sz}mm.nii.gz"), reorient=FALSE)
-> x[x==3] <- 0 #only 9 voxels to work with
+> x[x==3] <- 0 #only 9 voxels to work with at 2.3mm
 > 
 > #same renumbering as above
 > x[x==2] <- 1 #2 -> 1
@@ -60,19 +61,19 @@ In .local(nim, ...) :
 > 
 > print(table(x))
 x
-     0      1      2      3      4      5 
-607179    110    190     76    301    144 
+      0       1       2       3       4       5 
+7210809    1196    2540     994    3685    1808 
 > 
 > writeNIfTI(x, glue("r_striatum_tight_7Networks_{sz}mm"), verbose = TRUE)
   niftiExtension detected!
   vox_offset = 2768
   writing niftiExtension(s) at byte = 352
   writing data at byte = 2768
-[1] "r_striatum_tight_7Networks_2.3mm.nii.gz"
+[1] "r_striatum_tight_7Networks_1.0mm.nii.gz"
 Warning message:
 In .local(nim, ...) :
   Class is of niftiExtension, extensions can be removed using as.nifti
 > 
 > proc.time()
    user  system elapsed 
-  3.370   0.118   3.959 
+ 19.648   1.326  21.013 
