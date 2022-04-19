@@ -271,4 +271,4 @@ The calculated mean rotation is:  42.34664
 > 
 > proc.time()
    user  system elapsed 
-  8.459   0.883   9.469 
+  7.582   0.563   8.336 

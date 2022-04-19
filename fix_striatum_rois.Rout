@@ -76,4 +76,4 @@ In .local(nim, ...) :
 > 
 > proc.time()
    user  system elapsed 
- 19.648   1.326  21.013 
+ 20.245   0.803  21.844 
