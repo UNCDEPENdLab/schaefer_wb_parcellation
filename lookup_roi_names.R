@@ -20,6 +20,7 @@ if (length(args) == 2L) {
 
 library(fmri.pipeline)
 library(glue)
+library(dplyr)
 
 #atlas <- "/proj/mnhallqlab/projects/clock_analysis/fmri/pfc_entropy/masks/Schaefer_DorsAttn_2.3mm.nii.gz"
 
@@ -36,7 +37,13 @@ wami_obj <- afni_whereami$new(
   coord_orientation = "RAI", coord_space = "MNI", coord_file_columns = 0:2
 )
 
-wami_obj$run()
+wami_obj$run(force=TRUE)
 label_df <- wami_obj$get_whereami_df()
 unlink("atlas_cm.txt")
+unlink("atlas_cm_whereami.txt")
+label_df <- label_df %>%
+  arrange(x,y,z) %>%
+  mutate(spatial_roi_num = 1:n()) %>%
+  select(roi_num, spatial_roi_num, everything())
+
 write.csv(label_df, file=out_file, row.names=FALSE)

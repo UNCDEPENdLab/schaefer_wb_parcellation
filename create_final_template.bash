@@ -7,7 +7,7 @@ set -ex
 #beautifully coregistered, whereas the original variant (from the code on Github) is good but not perfect.
 [ ! -d "high_res_originals" ] && mkdir "high_res_originals"
 
-nSchaefer=200 # parcels
+nSchaefer=400 # parcels
 nAddl=44 # sum of all subcortical parcels
 sz=1.0 # mm: internal size for making combined mask
 output_res=2.3 # mm output resolution (resampling)
